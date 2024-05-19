@@ -83,7 +83,8 @@ def check(netmodel):
         labletensor = torch.tensor(model.wv[l[i]])
         labletensor=labletensor.to(device)
         betterrate = Tool.tensorbetter( modeltensor, pre_label[i], labletensor)
-        print(l[i].ljust(6,"　")+"\t\t："+">".rjust(int(betterrate*100),">")+str(round(betterrate * 100)) + "%")
+        print("/".join(d[i])+"\t|"+ l[i].ljust(6,"　")+"\t\t排名："+">".rjust(int(betterrate*100),">")+str(round(betterrate * 100,1)) + "%")
+
 
 
 
@@ -136,12 +137,12 @@ def word2vectorready(lines):
 
 if __name__ == '__main__':
     random.seed(int(time.time()))
-    Downloader.download()
+    #Downloader.download()
     with open("cmb.txt", encoding="utf-8") as f:
         lines = f.readlines();
-        word2vectorready(lines)
-        train(lines)
-        betterhist(lines,  "step3-batch0.pkl")
+        #word2vectorready(lines)
+        #train(lines)
+        #betterhist(lines,  "step3-batch0.pkl")
         while True:
             check( "step3-batch0.pkl")
 

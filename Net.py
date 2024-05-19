@@ -19,10 +19,10 @@ class Net(nn.Module):
         x = self.bn20(torch.relu(self.conv1(x)))  # (N,1000,100)
         x = self.bn20(torch.relu(self.conv2(x)))  # (N,1000,100)
         x = self.maxpool(x)  # (N,1000,4)
-        x = self.dropout10(x)
+        #x = self.dropout10(x) #训练时使用，预测时关闭
         x = self.bn40(torch.relu(self.conv3(x)))  # (N,1000,4)
         x = self.avgpool(x)  # (N,1000,1)
-        x = self.dropout20(x)
+        #x = self.dropout20(x) #训练时使用，预测时关闭
         x = x.view(x.size(0), -1)  # (N,1000)
         x = self.fc(x)  # (N,100)
         return x
