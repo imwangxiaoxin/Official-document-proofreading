@@ -17,6 +17,26 @@ def tensorbetter(model,prelable,right):
             count=count+1#参考投影值
     return count/len(allcos)
 
+def lines2sens(lines):
+    sentences = []
+    for l in lines:
+        l = l.replace("\\\n", "\n")
+        l = l.replace("，", "，\n")
+        l = l.replace("。", "。\n")
+        l = l.replace("？", "？\n")
+        l = l.replace("！", "！\n")
+        ls = l.split("\n")
+        for ll in ls:
+            if len(ll) > 10:
+                sentences.append(ll)
+    return sentences
+
+def sens2words(sens):
+    words=[]
+    for sen in sens:
+        word=jieba.cut(sen, cut_all=False)
+        words.append(list(word))
+    return words
 def gettext(lines,maxlen=10000000000):
     start = time.perf_counter()
     sentences = []
@@ -90,3 +110,4 @@ def data2vecs(model, data, lable):
         else:
             lablevectors.append(model.wv[lable[i]])
     return datavectors, lablevectors
+

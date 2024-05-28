@@ -20,23 +20,28 @@ EPOCH = 10
 testlength = 50
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
-def train(lines):
-    sens=Tool.gettext(lines)
-    net = Net()
-    model = gensim.models.Word2Vec.load('model/cmb.txt.model')
+def train(lines): #lines 一行是一段：xxxx,xxxx。xxxx,xxxx。
+    #net = Net()
+    net = torch.load("model/step0-batch37000.pkl")
+    model = gensim.models.Word2Vec.load('model/cmb.model')
     net.to(device)
     criterion = torch.nn.CrossEntropyLoss()
-    batchsize=50;
+    batchsize=250;#根据显卡性能决定，12G显存大概是100
+    sens=Tool.lines2sens(lines) #把每段文字拆成一句一句的:xxxx,
     for step in range(EPOCH):#轮次
         lr = LR - step / EPOCH / 2 * LR
         optimizer = torch.optim.Adam(net.parameters(), lr=lr)
         minloss = 0
-        bs=(int)(len(sens)/batchsize)
-        for b in range(bs): #批次
-            traindata=sens[b*batchsize:(b+1)*batchsize]
+        batchcount=(int)(len(sens)/batchsize)
+        for b in range(batchcount): #批次
+            batchsens=sens[b*batchsize:(b+1)*batchsize]
+            traindata=Tool.sens2words(batchsens)#xx|xx|xx|xx|。
             if b % 1000 == 0:
                 torch.save(net, "model/step" + str(step) + "-batch" + str(b) + '.pkl')
             sourcedata, sourcelabel = Tool.eraseone(traindata)  # 随机抹掉一个词后的文本原数据
+            sourcedata=sourcedata[0:batchsize*10]#截断多余数据，防止cuda out of memory
+            sourcelabel=sourcelabel[0:batchsize*10]
+            print("datalength:"+str(len(sourcelabel)))
             sdata, slable = Tool.data2vecs(model, sourcedata, sourcelabel)  # 词向量原数据
             data = sdata
             label = slable
@@ -53,8 +58,7 @@ def train(lines):
             lossnum=loss.item()
             if lossnum < minloss:
                 minloss = lossnum
-
-            print ("训练进度:step" + str(step) + "/" + str(EPOCH) + "-batch" + str(b) + "/" + str(bs) + '————train-loss:' + str(round(lossnum, 2)) + "，minloss：" + str(round(minloss, 2)))
+            print ("训练进度:step" + str(step) + "/" + str(EPOCH) + "-batch" + str(b) + "/" + str(batchcount) + '————train-loss:' + str(round(lossnum, 2)) + "，minloss：" + str(round(minloss, 2)))
         #end = time.perf_counter()
         #print("trained time:" + str(round((end - trainstart) / 60, 1)) + "min, file time:" + str(round((end - filestart) / 60, 1)) + "min")
 
@@ -84,10 +88,6 @@ def check(netmodel):
         labletensor=labletensor.to(device)
         betterrate = Tool.tensorbetter( modeltensor, pre_label[i], labletensor)
         print("/".join(d[i])+"\t|"+ l[i].ljust(6,"　")+"\t\t排名："+">".rjust(int(betterrate*100),">")+str(round(betterrate * 100,1)) + "%")
-
-
-
-
 
 
 def betterhist(lines, netmodel):
@@ -137,12 +137,19 @@ def word2vectorready(lines):
 
 if __name__ == '__main__':
     random.seed(int(time.time()))
-    #Downloader.download()
-    with open("cmb.txt", encoding="utf-8") as f:
-        lines = f.readlines();
-        #word2vectorready(lines)
-        #train(lines)
-        #betterhist(lines,  "step3-batch0.pkl")
-        while True:
-            check( "step3-batch0.pkl")
+    #Downloader.jfjb()
+    #Downloader.xi()
+    #Downloader.rmrb()
+    with open("text/xi.txt", encoding="gbk") as f:
+        xi = f.readlines();
+    with open("text/jfjb.txt", encoding="gbk") as f:
+        jfjb = f.readlines();
+    with open("text/rmrb.txt", encoding="gbk") as f:
+        rmrb = f.readlines();
+    cmb= xi+jfjb+rmrb
+    #word2vectorready(cmb)
+    train(cmb)
+    #betterhist(cmb,  "step3-batch0.pkl")
+    #while True:
+    #    check( "step3-batch0.pkl")
 
