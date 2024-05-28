@@ -2,17 +2,17 @@
 
 使用领导人讲话作为训练素材，训练一个卷积神经网络模型，实现对公文的识别校对
 ### 1.训练样本
-从人民网的“习近平系列重要讲话数据库”下载文字素材，共1.3万篇，约4千万字。整理好的[文本（2024.4月下载）](https://pan.baidu.com/s/1AyvUY6tOTP3QMfd_RkGlzw),提取码：pqo5
+从人民网的“习近平系列重要讲话数据库”下载文字素材，2024.5下载，约35.8MB文本，[xi.txt](https://pan.baidu.com/s/1JrannyoDZgm3F3PlFT-7aQ?pwd=eib0)。从人民日报下载的报纸文章，2021.1-2024.5，约239.2MB文本[rmrb.txt](https://pan.baidu.com/s/1xQY8fEopQqiTBRIUSeRCoA?pwd=6xze)。从解放军报下载的报纸文章,2018.1-2024.5，约301.9MB文本，[jfjb.txt](https://pan.baidu.com/s/1Rf2DpUDcRa0Vt65s3nZlxg?pwd=jmpd)。
 ### 2.分词工作
 使用jieba这个工具进行自动分词，效果非常好，基本符合汉语的说话习惯
 ### 3.词袋处理
 按照5个字为1个词袋，第3个字挖掉用来预测，XXXXX -> XX_XX|X
 ### 4.词向量化
-使用word2vec模型对汉语词汇进行向量化，以上素材共统计出8万个词，向量设置为100维足够了。训练好的[词向量模型](https://pan.baidu.com/s/1p6BMuWYajBgeIM-IvzpJ9Q),提取码：3wht
+使用word2vec模型对汉语词汇进行向量化，以上素材共统计出8万个词，向量设置为100维足够了。训练好的[词向量模型](https://pan.baidu.com/s/1D0dqOTIwmpWfiLIlge5t7w?pwd=9a1o)
 ### 5.神经网络
 设计3层全连接卷积神经网络，均设1000个通道
 ### 6.训练过程
-将训练材料分批进行训练，使用i7 13700kf + rtx 4070super台式机进行训练约半小时1轮，1轮就有非常好的效果，建议10轮。我训练了2轮，训练好的[模型](https://pan.baidu.com/s/1ddAaKqBr3QB2kvcZPozcbw),提取码：xowd
+将训练材料分批进行训练，使用i7 13700kf + rtx 4070super台式机进行训练约2小时1轮，1轮就有非常好的效果，训练好的[模型](https://pan.baidu.com/s/1VSOFwfiub1kZOJC-4hBmCw?pwd=476z)
 ### 7.预测过程
 将预测出的词向量与所有词向量进行比对，按照重合度（向量投影）进行排序，看所给的词所在排名，预测速率约每秒1000个字
 ### 8.预测效果
